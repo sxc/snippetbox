@@ -7,12 +7,16 @@ import (
 	"net/http"
 	"os"
 
+	// Import the models package we created.
+	"github.com/sxc/snippetbox/internal/models"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
 type application struct {
 	errorLog *log.Logger
 	infoLog  *log.Logger
+	snippets *models.SnippetModel
 }
 
 func main() {
@@ -41,6 +45,7 @@ func main() {
 	app := &application{
 		errorLog: errorLog,
 		infoLog:  infoLog,
+		snippets: &models.SnippetModel{DB: db},
 	}
 
 	// Use the http.NewServeMux() function to initialize a new servemux, then
