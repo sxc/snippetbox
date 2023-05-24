@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"html/template"
 	"net/http"
 	"strconv"
 
@@ -54,7 +55,6 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil || id < 1 {
-		// http.NotFound(w, r)
 		app.notFound(w)
 		return
 	}
@@ -69,7 +69,34 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	fmt.Fprintf(w, "Snippet"+"%+v", snippet)
+
+	// Initialize a slice containg the paths to the view.tmpl file,
+	// and the data to pass to the template.
+	files := []string{
+		"./ui/html/base.tmpl",
+		"./ui/html/partials/nav.tmpl",
+		"./ui/html/pages/view.tmpl",
+	}
+
+	// Parse the template files and execute the template.
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	// Create an instance of a templateData struct holding the snippet data.
+	data := &templateData{
+		Snippet: snippet,
+	}
+
+	// err = ts.ExecuteTemplate(w, "base", snippet)
+	err = ts.ExecuteTemplate(w, "base", data)
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	// fmt.Fprintf(w, "Snippet"+"%+v", snippet)
 	// w.Write([]byte("Display a specific snippet..."))
 }
 
