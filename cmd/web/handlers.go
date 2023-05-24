@@ -23,32 +23,34 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
-	for _, snippet := range snippets {
-		fmt.Fprintf(w, "%+v\n", snippet)
+	// for _, snippet := range snippets {
+	// 	fmt.Fprintf(w, "%+v\n", snippet)
+	// }
+
+	files := []string{
+		"./ui/html/base.tmpl",
+		"./ui/html/partials/nav.tmpl",
+		"./ui/html/pages/home.tmpl",
 	}
 
-	// files := []string{
-	// 	"./ui/html/base.tmpl",
-	// 	"./ui/html/partials/nav.tmpl",
-	// 	"./ui/html/pages/home.tmpl",
-	// }
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		// app.errorLog.Print(err.Error())
+		app.serverError(w, err)
+		// http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 
-	// ts, err := template.ParseFiles(files...)
-	// if err != nil {
-	// 	// app.errorLog.Print(err.Error())
-	// 	app.serverError(w, err)
-	// 	// http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-	// 	return
-	// }
+	data := &templateData{
+		Snippets: snippets,
+	}
 
-	// err = ts.ExecuteTemplate(w, "base", nil)
-	// if err != nil {
-	// 	// app.errorLog.Print(err.Error())
-	// 	app.serverError(w, err)
-	// 	// http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-	// }
-
-	// w.Write([]byte("Hello from Snippetbox"))
+	err = ts.ExecuteTemplate(w, "base", data)
+	if err != nil {
+		// app.errorLog.Print(err.Error())
+		app.serverError(w, err)
+		// http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
 }
 
 // Add a showSnippet handler function.
