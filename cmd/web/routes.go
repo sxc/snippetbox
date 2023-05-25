@@ -5,7 +5,7 @@ import (
 )
 
 // The routes() method returns a servemux containing our applicaiton routes.
-func (app *application) routes() *http.ServeMux {
+func (app *application) routes() http.Handler {
 	mux := http.NewServeMux()
 
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
@@ -15,5 +15,5 @@ func (app *application) routes() *http.ServeMux {
 	mux.HandleFunc("/snippet/create", app.snippetCreate)
 	mux.HandleFunc("/snippet/view", app.snippetView)
 
-	return mux
+	return app.recoverPanic(app.logRequest(secureHeaders(mux)))
 }
