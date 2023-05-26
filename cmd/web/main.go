@@ -11,6 +11,8 @@ import (
 	// Import the models package we created.
 	"github.com/sxc/snippetbox/internal/models"
 
+	"github.com/go-playground/form/v4"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -19,6 +21,7 @@ type application struct {
 	infoLog       *log.Logger
 	snippets      *models.SnippetModel
 	templateCache map[string]*template.Template
+	formDecoder   *form.Decoder
 }
 
 func main() {
@@ -49,12 +52,16 @@ func main() {
 		errorLog.Fatal(err)
 	}
 
+	// Initialize a new form decoder.
+	formDecoder := form.NewDecoder()
+
 	// Initialize a new instance of the application struct.
 	app := &application{
 		errorLog:      errorLog,
 		infoLog:       infoLog,
 		snippets:      &models.SnippetModel{DB: db},
 		templateCache: templateCache,
+		formDecoder:   formDecoder,
 	}
 
 	// Use the http.NewServeMux() function to initialize a new servemux, then
