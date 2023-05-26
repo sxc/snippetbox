@@ -47,23 +47,6 @@ func newTemplateCache() (map[string]*template.Template, error) {
 			return nil, err
 		}
 
-		// // Parse the base tempalte file into a template set.
-		// ts, err := template.ParseFiles("./ui/html/base.tmpl")
-		// if err != nil {
-		// 	return nil, err
-		// }
-
-		// ts, err = ts.ParseGlob("./ui/html/partials/*.tmpl")
-		// if err != nil {
-		// 	return nil, err
-		// }
-
-		// // Parse the files into a teplate set.
-		// ts, err = ts.ParseFiles(page)
-		// if err != nil {
-		// 	return nil, err
-		// }
-		// Add the template set to the cache.
 		cache[name] = ts
 	}
 	return cache, nil
@@ -73,4 +56,5 @@ type templateData struct {
 	CurrentYear int
 	Snippet     *models.Snippet
 	Snippets    []*models.Snippet
+	Form        any
 }
