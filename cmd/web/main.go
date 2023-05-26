@@ -7,9 +7,13 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
-	// Import the models package we created.
 	"github.com/sxc/snippetbox/internal/models"
+
+	"github.com/alexedwards/scs/v2"
+
+	"github.com/alexedwards/scs/mysqlstore"
 
 	"github.com/go-playground/form/v4"
 
@@ -17,11 +21,12 @@ import (
 )
 
 type application struct {
-	errorLog      *log.Logger
-	infoLog       *log.Logger
-	snippets      *models.SnippetModel
-	templateCache map[string]*template.Template
-	formDecoder   *form.Decoder
+	errorLog       *log.Logger
+	infoLog        *log.Logger
+	snippets       *models.SnippetModel
+	templateCache  map[string]*template.Template
+	formDecoder    *form.Decoder
+	sessionManager *scs.SessionManager
 }
 
 func main() {
@@ -55,21 +60,20 @@ func main() {
 	// Initialize a new form decoder.
 	formDecoder := form.NewDecoder()
 
+	// Initialize a new session manager.
+	sessionManager := scs.New()
+	sessionManager.Store = mysqlstore.New(db)
+	sessionManager.Lifetime = 12 * time.Hour
+
 	// Initialize a new instance of the application struct.
 	app := &application{
-		errorLog:      errorLog,
-		infoLog:       infoLog,
-		snippets:      &models.SnippetModel{DB: db},
-		templateCache: templateCache,
-		formDecoder:   formDecoder,
+		errorLog:       errorLog,
+		infoLog:        infoLog,
+		snippets:       &models.SnippetModel{DB: db},
+		templateCache:  templateCache,
+		formDecoder:    formDecoder,
+		sessionManager: sessionManager,
 	}
-
-	// Use the http.NewServeMux() function to initialize a new servemux, then
-	// register the home function as the handler for the "/" URL pattern.
-	// mux := http.NewServeMux()
-	// mux.HandleFunc("/", app.home)
-	// mux.HandleFunc("/snippet/create", app.snippetCreate)
-	// mux.HandleFunc("/snippet/view", app.snippetView)
 
 	srv := &http.Server{
 		Addr:     *addr,
