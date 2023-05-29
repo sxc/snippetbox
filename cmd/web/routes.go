@@ -3,6 +3,8 @@ package main
 import (
 	"net/http"
 
+	"github.com/sxc/snippetbox/ui"
+
 	"github.com/julienschmidt/httprouter"
 	"github.com/justinas/alice"
 )
@@ -15,10 +17,14 @@ func (app *application) routes() http.Handler {
 	router.NotFound = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		app.notFound(w)
 	})
+	// Take the ui.Files embedded filesystem
+	fileServer := http.FileServer(http.FS(ui.Files))
 
 	// Update the pattern for the route for the static files
-	fileServer := http.FileServer(http.Dir("./ui/static/"))
-	router.Handler(http.MethodGet, "/static/*filepath", http.StripPrefix("/static", fileServer))
+	// fileServer := http.FileServer(http.Dir("./ui/static/"))
+	// router.Handler(http.MethodGet, "/static/*filepath", http.StripPrefix("/static", fileServer))
+
+	router.Handler(http.MethodGet, "/static/*filepath", fileServer)
 
 	// Create a new middleware chain containing the middleware specific to our dynmic routes
 	dynamic := alice.New(app.sessionManager.LoadAndSave, noSurf, app.authenticate)
