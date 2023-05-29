@@ -9,8 +9,6 @@ import (
 
 // The routes() method returns a servemux containing our applicaiton routes.
 func (app *application) routes() http.Handler {
-	// mux := http.NewServeMux()
-
 	router := httprouter.New()
 
 	// set the handler for 404 and 405
@@ -23,7 +21,7 @@ func (app *application) routes() http.Handler {
 	router.Handler(http.MethodGet, "/static/*filepath", http.StripPrefix("/static", fileServer))
 
 	// Create a new middleware chain containing the middleware specific to our dynmic routes
-	dynamic := alice.New(app.sessionManager.LoadAndSave)
+	dynamic := alice.New(app.sessionManager.LoadAndSave, noSurf)
 
 	router.Handler(http.MethodGet, "/", dynamic.ThenFunc(app.home))
 	router.Handler(http.MethodGet, "/snippet/view/:id", dynamic.ThenFunc(app.snippetView))
