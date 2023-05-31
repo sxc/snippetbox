@@ -52,27 +52,6 @@ func newTemplateCache() (map[string]*template.Template, error) {
 		cache[name] = ts
 	}
 	return cache, nil
-
-	// Rigistered with the template set
-	// 	ts, err := template.New(name).Funcs(functions).ParseFiles("./ui/html/base.tmpl")
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
-
-	// 	ts, err = ts.ParseGlob("./ui/html/partials/*.tmpl")
-	// 	if err != nil {
-	// 		return nil, err
-
-	// 	}
-
-	// 	ts, err = ts.ParseFiles(page)
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
-
-	// 	cache[name] = ts
-	// }
-	// return cache, nil
 }
 
 type templateData struct {

@@ -50,10 +50,6 @@ func (app *application) render(w http.ResponseWriter, status int, page string, d
 	w.WriteHeader(status)
 	buf.WriteTo(w)
 
-	// err := ts.ExecuteTemplate(w, "base", data)
-	// if err != nil {
-	// 	app.serverError(w, err)
-	// }
 }
 
 // Create an newTemplateData() helper, which returns a pointer to a templateData
@@ -92,5 +88,4 @@ func (app *application) isAuthenticated(r *http.Request) bool {
 	}
 
 	return isAuthenticated
-	// return app.sessionManager.Exists(r.Context(), "authenticatedUserID")
 }

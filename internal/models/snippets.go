@@ -83,5 +83,4 @@ WHERE expires > UTC_TIMESTAMP() ORDER BY id DESC LIMIT 10`
 		return nil, err
 	}
 	return snippets, nil
-
 }
